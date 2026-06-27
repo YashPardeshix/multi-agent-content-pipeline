@@ -30,7 +30,7 @@ def should_continue(state: AgentState) -> str:
     
 
     if len(problems) > 50 and len(solution) > 50 and len(implementation) > 50: 
-        return "writer_node"
+        return "writer"
     else:
-        return "search_node"
+        return "search"
      
