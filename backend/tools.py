@@ -2,6 +2,7 @@ from tavily import TavilyClient
 import requests
 from dotenv import load_dotenv
 import os
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -17,6 +18,10 @@ def search_web_for_urls(query: str) -> list[str]:
 def fetch_urls(url: str) -> str:
     try:
         response = requests.get(url, timeout=10)
-        return response.text
+        soup = BeautifulSoup(response.text, "html.parser")
+        for tag in soup(["script", "style"]):
+            tag.decompose()
+        clean_text = soup.get_text()
+        return " ".join(clean_text.split())
     except Exception as e:
         return f"Error fetching {url}: {e}"
