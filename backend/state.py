@@ -11,3 +11,4 @@ class AgentState(TypedDict):
     full_article: str
     retry_count: int
     pass_feedback: str
+    urls: list[str]

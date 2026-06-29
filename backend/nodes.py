@@ -1,9 +1,10 @@
 from state import AgentState, ResearchBinder
+from tools import search_web_for_urls, fetch_urls
 
-def search_node(state: AgentState) -> dict:
-    print("--- RUNNING SEARCH NODE ---")
-    return {}
-
+def search_node(state: AgentState) -> AgentState:
+    urls = search_web_for_urls(state[topic])
+    return{"urls": urls}
+   
 def fetch_node(state: AgentState) -> dict:
     print("--- RUNNING FETCH NODE ---")
     mock_research: ResearchBinder = {
