@@ -1,17 +1,26 @@
 from state import AgentState, ResearchBinder
 from tools import search_web_for_urls, fetch_urls
+import json
+import os
+from openai import OpenAI
+
+os.getenv("NVIDIA_API_KEY")
+
+client = OpenAI(
+    base_url="https://integrate.api.nvidia.com/v1",
+    api_key=os.getenv("NVIDIA_API_KEY") 
+)
 
 def search_node(state: AgentState) -> AgentState:
     urls = search_web_for_urls(state[topic])
     return{"urls": urls}
-   
-def fetch_node(state: AgentState) -> dict:
-    print("--- RUNNING FETCH NODE ---")
-    mock_research: ResearchBinder = {
-        "developer_problems": "Developers struggle with setting up OAuth2 authentication.",
-        "core_solution": "Use a standardized library like Authlib instead of custom code.",
-        "core_implementation": "pip install authlib\n# Implement client setup..."
-    }
+
+def fetch_node(state:AgentState) -> AgentState:
+    mock_research = []
+    for url in state["urls"]:
+        content = fetch_urls(url)
+        if "Error" not in content:     
+            mock_research.append(content)
     return {"research_binder": mock_research}
 
 def writer_node(state: AgentState) -> dict:
