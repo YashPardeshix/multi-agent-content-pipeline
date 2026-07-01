@@ -15,13 +15,41 @@ def search_node(state: AgentState) -> AgentState:
     urls = search_web_for_urls(state[topic])
     return{"urls": urls}
 
-def fetch_node(state:AgentState) -> AgentState:
+def fetch_node(state: AgentState) -> dict:
     mock_research = []
+    
     for url in state["urls"]:
         content = fetch_urls(url)
         if "Error" not in content:     
             mock_research.append(content)
-    return {"research_binder": mock_research}
+
+    combined_web_text = "\n\n".join(mock_research)
+    
+    response = client.chat.completions.create(
+        model="meta/llama-3.1-70b-instruct",
+        response_format={"type": "json_object"}, 
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a Senior Technical Researcher. Analyze the provided web research "
+                    "and synthesize it into a clean JSON object containing exactly these keys:\n"
+                    "1. 'developer_problems': A detailed description of the developer pain points.\n"
+                    "2. 'core_solution': The structural mechanism that solves the problem.\n"
+                    "3. 'core_implementation': A clear, real-world code example demonstrating the solution."
+                )
+            },
+            {
+                "role": "user",
+                "content": f"Topic: {state['topic']}\n\nWeb Research Data:\n{combined_web_text}"
+            }
+        ]
+    )
+
+    raw_json_string = response.choices[0].message.content
+    parsed_json = json.loads(raw_json_string)
+
+    return {"research_binder": parsed_json}
 
 def writer_node(state: AgentState) -> dict:
     print("--- RUNNING WRITER NODE ---")
