@@ -51,7 +51,7 @@ Core Production Patterns Implemented
 
   - Decoupled Logic Routing (Conditional Edges): Keeps worker nodes pure (only
     transforming data) while flow control is entirely managed by read-only graph
-    edge transitions..
+    edge transitions.
   - Heuristic Validation (Fail-Fast Gatekeeping): Runs free, deterministic
     Python string-length validation checks on research data before routing to
     expensive generation nodes, protecting token budgets.
